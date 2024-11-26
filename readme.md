@@ -14,46 +14,40 @@ pip install kroky-library
 
 ## Usage
 
-Below are some examples of how to use the Kroky Library in your projects.
 
-### Example 1: Basic Usage
-
+### Initialize kroky
 ```python
-from kroky_library import main_function
+from kroky import Kroky
 
 # Describe what this example does
-result = main_function(arg1, arg2)
-print(result)
+login = Kroky(username:str, password:str)
 ```
 
-### Example 2: Advanced Usage
-
-```python
-from kroky_library import advanced_function
-
-# Describe what this example does
-result = advanced_function(arg1, arg2, arg3)
-print(result)
+### Get meals
+```py
+    print(login.get_menu(pos))
 ```
 
+### Select meal
+```py
+    print(login.select_meal(date, id))
+```
 ## Functions
 
-### `main_function(arg1, arg2)`
+### `get_menu(pos)`
 
-- **Description**: [Provide a description of what this function does]
+- **Description**: [Displays all meals in selected week]
 - **Parameters**:
-    - `arg1` (type): [Description of arg1]
-    - `arg2` (type): [Description of arg2]
-- **Returns**: [Description of the return value]
+    - `pos` (int): [pos is week defining -1 is last week, 0 is current week, 1 is next week]
+- **Returns**: [return json]
 
-### `advanced_function(arg1, arg2, arg3)`
+### `select_meal(date, id)`
 
-- **Description**: [Provide a description of what this function does]
+- **Description**: [Can select specific meal on specific day]
 - **Parameters**:
-    - `arg1` (type): [Description of arg1]
-    - `arg2` (type): [Description of arg2]
-    - `arg3` (type): [Description of arg3]
-- **Returns**: [Description of the return value]
+    - `date` (str): [date needs to be entered in this form YYYY-MM-DD]
+    - `date` (int): [id can be get from html on kroky website (alternative will be added shortly)]
+- **Returns**: [Returns if meal was selected seccessfuly or not]
 
 ## Contributing
 
@@ -72,4 +66,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Contact
 
-For any questions or issues, please open an issue on the [GitHub repository](https://github.com/yourusername/kroky-library).
+For any questions or issues, please open an issue on the [GitHub repository](https://github.com/Jonontop/kroky-library).
