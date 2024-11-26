@@ -9,7 +9,7 @@ The Kroky Library is a Python package designed to help you select meal true code
 To install the Kroky Library, use pip:
 
 ```bash
-pip install kroky-library
+pip install kroky
 ```
 
 ## Usage
