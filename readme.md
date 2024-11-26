@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Kroky Library is a Python package designed to [provide a brief description of what your library does]. This documentation provides an overview of the library's functionality, installation instructions, and usage examples.
+The Kroky Library is a Python package designed to help you select meal true code for easier customization (auto meal selection) and auto login. This documentation provides an overview of the library's functionality, installation instructions, and usage examples.
 
 ## Installation
 
@@ -19,18 +19,17 @@ pip install kroky-library
 ```python
 from kroky import Kroky
 
-# Describe what this example does
 login = Kroky(username:str, password:str)
 ```
 
 ### Get meals
 ```py
-    print(login.get_menu(pos))
+print(login.get_menu(pos))
 ```
 
 ### Select meal
 ```py
-    print(login.select_meal(date, id))
+print(login.select_meal(date, id))
 ```
 ## Functions
 
