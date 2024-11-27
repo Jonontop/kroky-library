@@ -65,7 +65,3 @@ class Kroky:
             return "Meal selected successfully!"
 
 
-
-login = Kroky("pe-jon", "q460jk")
-print(login.get_menu(1))
-print(login.select_meal("2022-01-01", 34764))
