@@ -58,9 +58,51 @@ class Kroky:
 
         return "Meal selected successfully!"
 
-
     def user_info(self):
-        
+        if self.response_status:
+            # Make sure you're sending the right data
+            form_data = {
+                "mod": "register",
+                "action": "editProfile",
+                # Add any other required fields here
+            }
+
+            url = self.session.get(self.main_url, headers={'Content-Type': 'application/x-www-form-urlencoded'},
+                                    params=form_data)
+
+            # Check the response HTML
+            soup = bs4.BeautifulSoup(url.text, "html.parser")
+
+            # Extract the rows and data
+            data = {}
+            rows = soup.find_all('tr')
+
+            for row in rows:
+                cells = row.find_all('td')
+                if len(cells) > 1:  # Ensure there are two cells in the row
+                    label = cells[0].get_text(strip=True)
+                    value = cells[1].get_text(strip=True)
+                    data = {
+                        "username": 
+                    }
+                    if label == "Ime:":
+                        data["Ime"] = value
+                    elif label == "Priimek:":
+                        data["Priimek"] = value
+                    elif label == "E-pošta:":
+                        data["E-pošta"] = soup.find('input', id='f_email')['value']  
+                    elif label == "Privzeti meni:":
+                        menu = cells[1].find('select')
+                        if menu:
+                            selected_option = menu.find('option', selected=True)
+                            if selected_option:
+                                data["Privzeti meni"] = selected_option.text.strip()  # Meni 6 - is selected
+                    elif label == "Uporabniško ime:":
+                        data["Uporabniško ime"] = value
+
+            # Print the extracted data
+            for key, value in data.items():
+                print(f"{key}: {value}")
 
 
     def change_password(self, password: str):
@@ -82,4 +124,4 @@ class Kroky:
 
 
 kroky = Kroky("pe-jon", "q460jk")
-print(kroky.get_menu(0))
+print(kroky.user_info())
