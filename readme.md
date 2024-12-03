@@ -31,6 +31,17 @@ print(login.get_menu(pos))
 ```py
 print(login.select_meal(date, id))
 ```
+
+### Get user data
+```py
+print(login.user_info()
+```
+
+### Change password
+```py
+print(login.change_password(password, password))
+```
+
 ## Functions
 
 ### `get_menu(pos)`
@@ -45,8 +56,21 @@ print(login.select_meal(date, id))
 - **Description**: [Can select specific meal on specific day]
 - **Parameters**:
     - `date` (str): [date needs to be entered in this form YYYY-MM-DD]
-    - `date` (int): [id can be get from html on kroky website (alternative will be added shortly)]
+    - `id` (int): [id can be get from html on kroky website (alternative will be added shortly)]
 - **Returns**: [Returns if meal was selected seccessfuly or not]
+
+### `user_info()`
+
+- **Description**: [can display user info]
+- **Returns**: [Return user info]
+
+### `change_password(password, password2)`
+
+- **Description**: [can change user password]
+- **Parameters**:
+    - `password` (str): [new password]
+    - `password2` (int): [retype new password]
+- **Returns**: [Returns if it succided in changing the password]
 
 ## Contributing
 
