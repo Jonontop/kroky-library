@@ -72,9 +72,7 @@ class Kroky:
 
             # Check the response HTML
             soup = bs4.BeautifulSoup(url.text, "html.parser")
-
-            # Extract the rows and data
-            data = {}
+            print(soup)
             rows = soup.find_all('tr')
 
             for row in rows:
@@ -83,26 +81,14 @@ class Kroky:
                     label = cells[0].get_text(strip=True)
                     value = cells[1].get_text(strip=True)
                     data = {
-                        "username": 
+                        "name": value if label == "Ime" else None,
+                        "surename": value if label == "Priimek" else None,
+                        "username": value,
+                        "email": soup.find('input', id='f_email')['value'],
+                        "main_menu": soup.find('select', {'name': 'privzeti'}).find('option', selected=True)['value']
                     }
-                    if label == "Ime:":
-                        data["Ime"] = value
-                    elif label == "Priimek:":
-                        data["Priimek"] = value
-                    elif label == "E-pošta:":
-                        data["E-pošta"] = soup.find('input', id='f_email')['value']  
-                    elif label == "Privzeti meni:":
-                        menu = cells[1].find('select')
-                        if menu:
-                            selected_option = menu.find('option', selected=True)
-                            if selected_option:
-                                data["Privzeti meni"] = selected_option.text.strip()  # Meni 6 - is selected
-                    elif label == "Uporabniško ime:":
-                        data["Uporabniško ime"] = value
 
-            # Print the extracted data
-            for key, value in data.items():
-                print(f"{key}: {value}")
+        return data
 
 
     def change_password(self, password: str):
