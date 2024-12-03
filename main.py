@@ -73,31 +73,26 @@ class Kroky:
             # Check the response HTML
             soup = bs4.BeautifulSoup(url.text, "html.parser")
             print(soup)
-            rows = soup.find_all('tr')
 
-            for row in rows:
-                cells = row.find_all('td')
-                if len(cells) > 1:  # Ensure there are two cells in the row
-                    label = cells[0].get_text(strip=True)
-                    value = cells[1].get_text(strip=True)
-                    data = {
-                        "name": value if label == "Ime" else None,
-                        "surename": value if label == "Priimek" else None,
-                        "username": value,
-                        "email": soup.find('input', id='f_email')['value'],
-                        "main_menu": soup.find('select', {'name': 'privzeti'}).find('option', selected=True)['value']
-                    }
+            value = "ni dodeljeno"
+            data = {
+                "name": value,
+                "surename": value,
+                "username": value,
+                "email": soup.find('input', id='f_email')['value'],
+                "main_menu": soup.find('select', {'name': 'privzeti'}).find('option', selected=True)['value']
+            }
 
         return data
 
 
-    def change_password(self, password: str):
-        if self.response.ok:
+    def change_password(self, password: str, password2: str):
+        if self.response_status:
             main_response = self.session.get(self.main_url, params={"mod": "register", "action": "editProfile"})
             if main_response.ok:
                 selection_data = {
                     "password": password,
-                    "password2": password,
+                    "password2": password2,
                 }
 
         selection_response = self.session.post(self.main_url, data=selection_data,
