@@ -49,9 +49,10 @@ class Kroky:
             "date": str(date),
         }
 
-        selection_response = self.session.post(self.main_url, data=selection_data,
-                                               headers={'Content-Type': 'application/x-www-form-urlencoded'},
-                                               params={"mod": "register", "action": "user2date2menu"})
+        selection_response = self.session.post(self.main_url, 
+            data=selection_data,
+            headers={'Content-Type': 'application/x-www-form-urlencoded'},
+            params={"mod": "register", "action": "user2date2menu"})
 
         if not selection_response.ok:
             return f"Failed to select meal with status code: {selection_response.status_code}", 500
@@ -64,11 +65,11 @@ class Kroky:
                                     params= {"mod": "register", "action": "editProfile"}).text, "html.parser")
 
         return {
-                "name": soup.find_all('td')[1].string.strip(),
-                "surename": soup.find_all('td')[3].string.strip(),
-                "username": soup.find('b').string,
+                "name": soup.find_all('td')[1].string.strip() if soup.find_all('td')[1].string.strip() else None,
+                "surename": soup.find_all('td')[3].string.strip() if soup.find_all('td')[3].string.strip() else None,
+                "username": soup.find('b').string if soup.find('b').string else None,
                 "email": soup.find('input', id='f_email')['value'],
-                "main_menu": soup.find('select', {'name': 'privzeti'}).find('option', selected=True)['value']
+                "main_menu": soup.find('select', {'name': 'privzeti'}).find('option', selected=True)['value'] if soup.find('select', {'name': 'privzeti'}).find('option', selected=True)['value'] else None
             }
 
 
@@ -76,17 +77,15 @@ class Kroky:
         if self.response_status:
             main_response = self.session.get(self.main_url, params={"mod": "register", "action": "editProfile"})
             if main_response.ok:
-                selection_data = {
-                    "password": password,
-                    "password2": password2,
-                }
+                selection_response = self.session.post(self.main_url,
+                    data={"password": password,"password2": password2,},
+                    headers={'Content-Type': 'application/x-www-form-urlencoded'},
+                    params={"mod": "register", "action": "editProfile"})
 
-        selection_response = self.session.post(self.main_url, data=selection_data,
-                                               headers={'Content-Type': 'application/x-www-form-urlencoded'},
-                                               params={"mod": "register", "action": "editProfile"})
-
-        if selection_response.ok:
-            return "dela"
-        return "ne dela!"
+                if selection_response.ok:
+                    return "dela"
+                return "ne dela!"
 
 
+kroky = Kroky("pe-jon", "q460jk")
+print(kroky.user_info())
