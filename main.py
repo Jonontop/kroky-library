@@ -18,7 +18,6 @@ class Kroky:
         menu = []
 
         if self.response_status:
-            print("Login successful")
 
             # Access the main URL using the same session
             main_response = self.session.get(self.main_url, params={"mod": "register", "action": "order", "pos": pos})
@@ -29,14 +28,23 @@ class Kroky:
                     day_menu = {i: []}
                     for k in range(1, 12):
                         for j in soup.find_all("td", class_=f"st_menija_{k}_{i}"):
+                            xxl_element = j.find(class_="xxl")
+                            if xxl_element:
+                                input_element = xxl_element.find("input")
+                                xxl_checked = True if input_element and input_element.get(
+                                    "checked") == "checked" else False
+                            else:
+                                xxl_checked = False
+
                             day_menu[i].append({
                                 f"meni": j.find("span", class_="lepo_ime").text,
-                                "selected": True if j.find("input").has_attr("checked") else False
+                                "selected": True if j.find("input").has_attr("checked") else False,
+                                "xxl": xxl_checked
                             })
                     menu.append(day_menu)
 
                 self.menu = menu
-                return menu[0]
+                return menu
             else:
                 return f"Failed to access main URL: {main_response.status_code}"
         else:
@@ -49,7 +57,7 @@ class Kroky:
             "date": str(date),
         }
 
-        selection_response = self.session.post(self.main_url, 
+        selection_response = self.session.post(self.main_url,
             data=selection_data,
             headers={'Content-Type': 'application/x-www-form-urlencoded'},
             params={"mod": "register", "action": "user2date2menu"})
@@ -86,6 +94,3 @@ class Kroky:
                     return "dela"
                 return "ne dela!"
 
-
-kroky = Kroky("pe-jon", "q460jk")
-print(kroky.user_info())
