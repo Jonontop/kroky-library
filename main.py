@@ -40,7 +40,7 @@ class Kroky:
             else:
                 return f"Failed to access main URL: {main_response.status_code}"
         else:
-            return (f"Login failed: napacni vhodni podatki")
+            return f"Login failed: napacni vhodni podatki"
 
     def select_meal(self, date, id):
 
@@ -60,30 +60,16 @@ class Kroky:
 
     def user_info(self):
         if self.response_status:
-            # Make sure you're sending the right data
-            form_data = {
-                "mod": "register",
-                "action": "editProfile",
-                # Add any other required fields here
-            }
+            soup = bs4.BeautifulSoup(self.session.get(self.main_url, headers={'Content-Type': 'application/x-www-form-urlencoded'},
+                                    params= {"mod": "register", "action": "editProfile"}).text, "html.parser")
 
-            url = self.session.get(self.main_url, headers={'Content-Type': 'application/x-www-form-urlencoded'},
-                                    params=form_data)
-
-            # Check the response HTML
-            soup = bs4.BeautifulSoup(url.text, "html.parser")
-            print(soup)
-
-            value = "ni dodeljeno"
-            data = {
-                "name": value,
-                "surename": value,
-                "username": value,
+        return {
+                "name": soup.find_all('td')[1].string.strip(),
+                "surename": soup.find_all('td')[3].string.strip(),
+                "username": soup.find('b').string,
                 "email": soup.find('input', id='f_email')['value'],
                 "main_menu": soup.find('select', {'name': 'privzeti'}).find('option', selected=True)['value']
             }
-
-        return data
 
 
     def change_password(self, password: str, password2: str):
@@ -104,5 +90,3 @@ class Kroky:
         return "ne dela!"
 
 
-kroky = Kroky("pe-jon", "q460jk")
-print(kroky.user_info())
