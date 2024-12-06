@@ -12,7 +12,7 @@ class Kroky:
         self.response = self.session.post(self.main_url, data={"username": self.username, "password": self.password},
                                           params={"mod": "register", "action": "login"})
         soup = bs4.BeautifulSoup(self.response.text, "html.parser")
-        self.response_status = False if soup.find('font', color="Red") else True
+        self.response_status = not soup.find('font', color="Red")
 
     def get_menu(self, pos, day=("pon", "tor", "sre", "cet", "pet", "sob")):
         menu = []
@@ -28,19 +28,22 @@ class Kroky:
                     day_menu = {i: []}
                     for k in range(1, 12):
                         for j in soup.find_all("td", class_=f"st_menija_{k}_{i}"):
-                            xxl_element = j.find(class_="xxl")
-                            if xxl_element:
-                                input_element = xxl_element.find("input")
-                                xxl_checked = True if input_element and input_element.get(
-                                    "checked") == "checked" else False
-                            else:
-                                xxl_checked = False
+                            try:
+                                xxl_element = j.find(class_="xxl")
+                                if xxl_element:
+                                    input_element = xxl_element.find("input")
+                                    xxl_checked = True if input_element and input_element.get(
+                                        "checked") == "checked" else False
+                                else:
+                                    xxl_checked = False
 
-                            day_menu[i].append({
-                                f"meni": j.find("span", class_="lepo_ime").text,
-                                "selected": True if j.find("input").has_attr("checked") else False,
-                                "xxl": xxl_checked
-                            })
+                                day_menu[i].append({
+                                    f"meni": j.find("span", class_="lepo_ime").text,
+                                    "selected": True if j.find("input").has_attr("checked") else False,
+                                    "xxl": xxl_checked
+                                })
+                            except: 
+                                pass
                     menu.append(day_menu)
 
                 self.menu = menu
@@ -93,4 +96,3 @@ class Kroky:
                 if selection_response.ok:
                     return "dela"
                 return "ne dela!"
-
