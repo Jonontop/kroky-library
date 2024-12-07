@@ -200,9 +200,8 @@ class KrokyAsync:
 
 
 
-
-async def main():
-    pass
-
-if __name__ == "__main__":
-    asyncio.run(main())
+# main func
+def main():
+    kroky_async = KrokyAsync("username", "password")
+    asyncio.run(kroky_async.initialize())
+    print(asyncio.run(kroky_async.get_menu(0)))
