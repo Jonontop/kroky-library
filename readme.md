@@ -42,6 +42,38 @@ print(login.user_info()
 print(login.change_password(password, password))
 ```
 
+## Asinronus Usage
+### Initialize kroky
+```py
+from kroky import KrokyAsync
+
+async def main():
+    async with KrokyAsync("USERNAME", "PASSWORD") as kroky:
+
+
+asyncio.run(main())
+```
+### Get meal
+```py
+print(await kroky.get_menu(pos))
+```
+
+### Select meal
+```py
+print(await kroky.select_meal(date, id))
+```
+
+### Get user data
+```py
+print(await kroky.user_info())
+```
+
+### Change password
+```þy
+print(await kroky.change_password("password", "password")
+```
+
+
 ## Functions
 
 ### `get_menu(pos)`
