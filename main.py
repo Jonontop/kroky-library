@@ -108,6 +108,12 @@ class KrokyAsync:
         self.session = None
         self.response_status = False
 
+    @classmethod
+    async def create(cls, username, password):
+        self = cls(username, password)
+        await self.initialize()
+        return self
+
     async def initialize(self):
         self.session = aiohttp.ClientSession()
         self.response_status = await self.login(self.username, self.password)
@@ -197,11 +203,10 @@ class KrokyAsync:
         if self.session:
             await self.session.close()
 
+    # Context manager to auto-close session
+    async def __aenter__(self):
+        await self.initialize()
+        return self
 
-
-
-# main func
-def main():
-    kroky_async = KrokyAsync("username", "password")
-    asyncio.run(kroky_async.initialize())
-    print(asyncio.run(kroky_async.get_menu(0)))
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        await self.close_session()
