@@ -69,7 +69,7 @@ print(await kroky.user_info())
 ```
 
 ### Change password
-```þy
+```py
 print(await kroky.change_password("password", "password")
 ```
 
