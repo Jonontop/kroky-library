@@ -1,21 +1,23 @@
 import requests
 import bs4
 import aiohttp
-#import asyncio
+import asyncio
 
 class Kroky:
     def __init__(self, username, password):
-        self.username = username
-        self.password = password
         self.main_url = "https://www.kroky.si/2016/"
-        self.menu = []
+        self.menu = ""
+        self.pos = 0
         self.session = requests.Session()
-        self.response = self.session.post(self.main_url, data={"username": self.username, "password": self.password},
+        self.response = self.session.post(self.main_url, data={"username": username, "password": password},
                                           params={"mod": "register", "action": "login"})
         soup = bs4.BeautifulSoup(self.response.text, "html.parser")
         self.response_status = not soup.find('font', color="Red")
 
-    def get_menu(self, pos, day=("pon", "tor", "sre", "cet", "pet", "sob")):
+    def get_menu(self, pos = 0, day=("pon", "tor", "sre", "cet", "pet", "sob")):
+        if self.menu != "" and self.pos == pos:
+            return self.menu
+
         menu = {}
 
         if self.response_status:
@@ -48,6 +50,7 @@ class Kroky:
                     menu[i] = day_menu
 
                 self.menu = menu
+                self.pos = pos
                 return menu
             else:
                 return f"Failed to access main URL: {main_response.status_code}"
