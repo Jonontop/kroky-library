@@ -108,6 +108,11 @@ class Kroky:
                 return "ne dela!"
 
 
+    def __str__(self):
+        return "Dobrodošel v kroky knjižnico! za pomoč pri uporabi si poglej dokumentacijo na: https://github.com/Jonontop/kroky-library/blob/main/readme.md"
+
+
+
 class KrokyAsync:
     def __init__(self, username, password):
         self.main_url = "https://www.kroky.si/2016/"
