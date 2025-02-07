@@ -3,19 +3,21 @@ import bs4
 import aiohttp
 import asyncio
 
+
 class Kroky:
     def __init__(self, username, password):
         self.main_url = "https://www.kroky.si/2016/"
-        self.menu = ""
-        self.pos = 0
+        self.menu = None
+        self.pos = None
+        self.day = None
         self.session = requests.Session()
         self.response = self.session.post(self.main_url, data={"username": username, "password": password},
                                           params={"mod": "register", "action": "login"})
         soup = bs4.BeautifulSoup(self.response.text, "html.parser")
         self.response_status = not soup.find('font', color="Red")
 
-    def get_menu(self, pos = 0, day=("pon", "tor", "sre", "cet", "pet", "sob")):
-        if self.menu != "" and self.pos == pos:
+    def get_menu(self, pos=0, day=("pon", "tor", "sre", "cet", "pet", "sob")):
+        if self.menu is not None and self.pos == pos and self.day == day:
             return self.menu
 
         menu = {}
@@ -23,7 +25,8 @@ class Kroky:
         if self.response_status:
 
             # Access the main URL using the same session
-            main_response = self.session.get(self.main_url, params={"mod": "register", "action": "order", "pos": pos-1})
+            main_response = self.session.get(self.main_url,
+                                             params={"mod": "register", "action": "order", "pos": pos - 1})
 
             if main_response.ok:
                 soup = bs4.BeautifulSoup(main_response.text, "html.parser")
@@ -49,6 +52,8 @@ class Kroky:
                                 pass
                     menu[i] = day_menu
 
+                # Set parameters to global parameters for optimization purpeses
+                self.day = day
                 self.menu = menu
                 self.pos = pos
                 return menu
@@ -65,9 +70,9 @@ class Kroky:
         }
 
         selection_response = self.session.post(self.main_url,
-            data=selection_data,
-            headers={'Content-Type': 'application/x-www-form-urlencoded'},
-            params={"mod": "register", "action": "user2date2menu"})
+                                               data=selection_data,
+                                               headers={'Content-Type': 'application/x-www-form-urlencoded'},
+                                               params={"mod": "register", "action": "user2date2menu"})
 
         if not selection_response.ok:
             return f"Failed to select meal with status code: {selection_response.status_code}", 500
@@ -76,26 +81,27 @@ class Kroky:
 
     def user_info(self):
         if self.response_status:
-            soup = bs4.BeautifulSoup(self.session.get(self.main_url, headers={'Content-Type': 'application/x-www-form-urlencoded'},
-                                    params= {"mod": "register", "action": "editProfile"}).text, "html.parser")
+            soup = bs4.BeautifulSoup(
+                self.session.get(self.main_url, headers={'Content-Type': 'application/x-www-form-urlencoded'},
+                                 params={"mod": "register", "action": "editProfile"}).text, "html.parser")
 
         return {
-                "name": soup.find_all('td')[1].string.strip() if soup.find_all('td')[1].string.strip() else None,
-                "surename": soup.find_all('td')[3].string.strip() if soup.find_all('td')[3].string.strip() else None,
-                "username": soup.find('b').string if soup.find('b').string else None,
-                "email": soup.find('input', id='f_email')['value'],
-                "main_menu": soup.find('select', {'name': 'privzeti'}).find('option', selected=True)['value'] if soup.find('select', {'name': 'privzeti'}).find('option', selected=True)['value'] else None
-            }
-
+            "name": soup.find_all('td')[1].string.strip() if soup.find_all('td')[1].string.strip() else None,
+            "surename": soup.find_all('td')[3].string.strip() if soup.find_all('td')[3].string.strip() else None,
+            "username": soup.find('b').string if soup.find('b').string else None,
+            "email": soup.find('input', id='f_email')['value'],
+            "main_menu": soup.find('select', {'name': 'privzeti'}).find('option', selected=True)['value'] if
+            soup.find('select', {'name': 'privzeti'}).find('option', selected=True)['value'] else None
+        }
 
     def change_password(self, password: str, password2: str):
         if self.response_status:
             main_response = self.session.get(self.main_url, params={"mod": "register", "action": "editProfile"})
             if main_response.ok:
                 selection_response = self.session.post(self.main_url,
-                    data={"password": password,"password2": password2,},
-                    headers={'Content-Type': 'application/x-www-form-urlencoded'},
-                    params={"mod": "register", "action": "editProfile"})
+                                                       data={"password": password, "password2": password2, },
+                                                       headers={'Content-Type': 'application/x-www-form-urlencoded'},
+                                                       params={"mod": "register", "action": "editProfile"})
 
                 if selection_response.ok:
                     return "dela"
@@ -131,7 +137,8 @@ class KrokyAsync:
         menu = {}
 
         if self.response_status:
-            async with self.session.get(self.main_url, params={"mod": "register", "action": "order", "pos": pos}) as main_response:
+            async with self.session.get(self.main_url,
+                                        params={"mod": "register", "action": "order", "pos": pos}) as main_response:
                 if main_response.ok:
                     soup = bs4.BeautifulSoup(await main_response.text(), "html.parser")
                     for i in day:
@@ -167,7 +174,6 @@ class KrokyAsync:
                                      data=selection_data,
                                      headers={'Content-Type': 'application/x-www-form-urlencoded'},
                                      params={"mod": "register", "action": "user2date2menu"}) as selection_response:
-
             if not selection_response.ok:
                 return f"Failed to select meal with status code: {selection_response.status}", 500
 
@@ -185,14 +191,16 @@ class KrokyAsync:
                 "surename": soup.find_all('td')[3].string.strip() if soup.find_all('td')[3].string.strip() else None,
                 "username": soup.find('b').string if soup.find('b').string else None,
                 "email": soup.find('input', id='f_email')['value'],
-                "main_menu": soup.find('select', {'name': 'privzeti'}).find('option', selected=True)['value'] if soup.find('select', {'name': 'privzeti'}).find('option', selected=True)['value'] else None
+                "main_menu": soup.find('select', {'name': 'privzeti'}).find('option', selected=True)['value'] if
+                soup.find('select', {'name': 'privzeti'}).find('option', selected=True)['value'] else None
             }
 
     async def change_password(self, password: str, password2: str):
         if not self.response_status:
             return "Login failed"
 
-        async with self.session.get(self.main_url, params={"mod": "register", "action": "editProfile"}) as main_response:
+        async with self.session.get(self.main_url,
+                                    params={"mod": "register", "action": "editProfile"}) as main_response:
             if main_response.ok:
                 async with self.session.post(self.main_url,
                                              data={"password": password, "password2": password2},
@@ -213,4 +221,3 @@ class KrokyAsync:
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         await self.close_session()
-
