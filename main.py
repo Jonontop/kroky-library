@@ -1,7 +1,7 @@
 import requests
 import bs4
 import aiohttp
-import asyncio
+#import asyncio
 
 class Kroky:
     def __init__(self, username, password):
@@ -16,17 +16,17 @@ class Kroky:
         self.response_status = not soup.find('font', color="Red")
 
     def get_menu(self, pos, day=("pon", "tor", "sre", "cet", "pet", "sob")):
-        menu = []
+        menu = {}
 
         if self.response_status:
 
             # Access the main URL using the same session
-            main_response = self.session.get(self.main_url, params={"mod": "register", "action": "order", "pos": pos})
+            main_response = self.session.get(self.main_url, params={"mod": "register", "action": "order", "pos": pos-1})
 
             if main_response.ok:
                 soup = bs4.BeautifulSoup(main_response.text, "html.parser")
                 for i in day:
-                    day_menu = {i: []}
+                    day_menu = []
                     for k in range(1, 12):
                         for j in soup.find_all("td", class_=f"st_menija_{k}_{i}"):
                             try:
@@ -38,14 +38,14 @@ class Kroky:
                                 else:
                                     xxl_checked = False
 
-                                day_menu[i].append({
+                                day_menu.append({
                                     f"meni": j.find("span", class_="lepo_ime").text,
                                     "selected": True if j.find("input").has_attr("checked") else False,
                                     "xxl": xxl_checked
                                 })
                             except:
                                 pass
-                    menu.append(day_menu)
+                    menu[i] = day_menu
 
                 self.menu = menu
                 return menu
@@ -125,28 +125,28 @@ class KrokyAsync:
             return not soup.find('font', color="Red")
 
     async def get_menu(self, pos, day=("pon", "tor", "sre", "cet", "pet", "sob")):
-        menu = []
+        menu = {}
 
         if self.response_status:
             async with self.session.get(self.main_url, params={"mod": "register", "action": "order", "pos": pos}) as main_response:
                 if main_response.ok:
                     soup = bs4.BeautifulSoup(await main_response.text(), "html.parser")
                     for i in day:
-                        day_menu = {i: []}
+                        day_menu = []
                         for k in range(1, 12):
                             for j in soup.find_all("td", class_=f"st_menija_{k}_{i}"):
                                 try:
                                     xxl_element = j.find(class_="xxl")
                                     xxl_checked = bool(xxl_element and xxl_element.find("input", checked=True))
 
-                                    day_menu[i].append({
+                                    day_menu.append({
                                         "meni": j.find("span", class_="lepo_ime").text,
                                         "selected": j.find("input").has_attr("checked"),
                                         "xxl": xxl_checked
                                     })
                                 except:
                                     pass
-                        menu.append(day_menu)
+                        menu[i] = day_menu
                     self.menu = menu
                     return menu
                 else:
@@ -210,3 +210,4 @@ class KrokyAsync:
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         await self.close_session()
+
