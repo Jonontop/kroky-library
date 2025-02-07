@@ -34,7 +34,7 @@ print(login.select_meal(date, id))
 
 ### Get user data
 ```py
-print(login.user_info()
+print(login.user_info())
 ```
 
 ### Change password
