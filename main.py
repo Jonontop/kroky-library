@@ -19,7 +19,7 @@ class Kroky:
     def get_menu(self, pos=0, day=("pon", "tor", "sre", "cet", "pet", "sob")):
         if self.menu is not None and self.pos == pos and self.day == day:
             return self.menu
-
+        
         menu = {}
 
         if self.response_status:
@@ -44,9 +44,10 @@ class Kroky:
                                     xxl_checked = False
 
                                 day_menu.append({
-                                    f"meni": j.find("span", class_="lepo_ime").text,
+                                    "meni": j.find("span", class_="lepo_ime").text,
                                     "selected": True if j.find("input").has_attr("checked") else False,
-                                    "xxl": xxl_checked
+                                    "xxl": xxl_checked,
+                                    "id": j.find("input")["id"] if j.find("input") and j.find("input").has_attr("id") else None
                                 })
                             except:
                                 pass
@@ -157,7 +158,9 @@ class KrokyAsync:
                                     day_menu.append({
                                         "meni": j.find("span", class_="lepo_ime").text,
                                         "selected": j.find("input").has_attr("checked"),
-                                        "xxl": xxl_checked
+                                        "xxl": xxl_checked,
+                                        "id": j.find("input")["id"] if j.find("input") and j.find("input").has_attr("id") else None
+
                                     })
                                 except:
                                     pass

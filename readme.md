@@ -26,6 +26,19 @@ login = Kroky(username:str, password:str)
 ```py
 print(login.get_menu(pos))
 ```
+##### Example response:
+```py
+{
+    'pon': [
+        {'meni': 'Ime menija', 'selected': False, 'xxl': False, 'id': 'Id menija'},
+        ...
+    ],
+    'tor': [
+        ...
+    ],
+    ...
+}
+```
 
 ### Select meal
 ```py
@@ -42,7 +55,7 @@ print(login.user_info())
 print(login.change_password(password, password))
 ```
 
-## Asinronus Usage
+## Asynchronous Usage
 ### Initialize kroky
 ```py
 from kroky import KrokyAsync
