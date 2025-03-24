@@ -47,7 +47,7 @@ class Kroky:
                                     "meni": j.find("span", class_="lepo_ime").text,
                                     "selected": True if j.find("input").has_attr("checked") else False,
                                     "xxl": xxl_checked,
-                                    "id": j.find("input")["id"] if j.find("input") and j.find("input").has_attr("id") else None
+                                    "id": j.find("input")["cat_id"] if j.find("input") and j.find("input").has_attr("cat_id") else None
                                 })
                             except:
                                 pass
@@ -159,7 +159,7 @@ class KrokyAsync:
                                         "meni": j.find("span", class_="lepo_ime").text,
                                         "selected": j.find("input").has_attr("checked"),
                                         "xxl": xxl_checked,
-                                        "id": j.find("input")["id"] if j.find("input") and j.find("input").has_attr("id") else None
+                                        "id": j.find("input")["cat_id"] if j.find("input") and j.find("input").has_attr("cat_id") else None
 
                                     })
                                 except:
